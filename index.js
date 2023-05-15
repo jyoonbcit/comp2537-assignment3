@@ -6,7 +6,7 @@ const updatePaginationDiv = (currentPage, numPages) => {
   $('#pagination').empty()
 
   const endPage = numPages;
-  for (let i = currentPage; i <= currentPage + 4; i++) {
+  for (let i = currentPage; (i <= currentPage + 4 && i <= endPage); i++) {
     if (i === currentPage && currentPage !== 1) {
         $('#pagination').append(`
         <button class="btn btn-primary numberedButtons" value="${currentPage - 1}">Previous</button>
@@ -29,9 +29,11 @@ const updatePaginationDiv = (currentPage, numPages) => {
 
 const paginate = async (currentPage, PAGE_SIZE, pokemons) => {
   selected_pokemons = pokemons.slice((currentPage - 1) * PAGE_SIZE, currentPage * PAGE_SIZE)
+  number_of_pokemon = 0;
 
   $('#pokeCards').empty()
   selected_pokemons.forEach(async (pokemon) => {
+    number_of_pokemon++;
     const res = await axios.get(pokemon.url)
     $('#pokeCards').append(`
       <div class="pokeCard card" pokeName=${res.data.name}   >
@@ -43,6 +45,10 @@ const paginate = async (currentPage, PAGE_SIZE, pokemons) => {
         </div>  
         `)
   })
+  $('#numberOfPokemon').html(`
+    <h3>Total number of Pokemon: ${pokemons.length}</h3>
+    <h3>Number of Pokemon displayed: ${number_of_pokemon}</h3>
+    `)
 }
 
 const setup = async () => {
