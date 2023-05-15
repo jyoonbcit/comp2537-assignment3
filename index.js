@@ -21,6 +21,7 @@ const updatePaginationDiv = (currentPage, numPages) => {
         `)
     }
     if (i === currentPage) {
+        $(`button[value=${i}]`).removeClass('btn-primary')
         $(`button[value=${i}]`).addClass('btn-warning')
     }
   }
