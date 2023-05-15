@@ -101,8 +101,6 @@ const setup = async () => {
     //update pagination buttons
     updatePaginationDiv(currentPage, numPages)
   })
-
 }
-
 
 $(document).ready(setup)
