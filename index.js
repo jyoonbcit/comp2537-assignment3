@@ -2,18 +2,28 @@ const PAGE_SIZE = 10
 let currentPage = 1;
 let pokemons = []
 
-
 const updatePaginationDiv = (currentPage, numPages) => {
   $('#pagination').empty()
 
-  const startPage = 1;
   const endPage = numPages;
-  for (let i = startPage; i <= endPage; i++) {
+  for (let i = currentPage; i <= currentPage + 4; i++) {
+    if (i === currentPage && currentPage !== 1) {
+        $('#pagination').append(`
+        <button class="btn btn-primary page numberedButtons" value="${currentPage - 1}">Previous</button>
+        `)
+    }
     $('#pagination').append(`
-    <button class="btn btn-primary page ml-1 numberedButtons" value="${i}">${i}</button>
+    <button class="btn btn-primary page numberedButtons" value="${i}">${i}</button>
     `)
+    if (i === currentPage + 4 && currentPage !== endPage) {
+        $('#pagination').append(`
+        <button class="btn btn-primary page numberedButtons" value="${currentPage + 1}">Next</button>
+        `)
+    }
+    if (i === currentPage) {
+        $(`button[value=${i}]`).addClass('btn-warning')
+    }
   }
-
 }
 
 const paginate = async (currentPage, PAGE_SIZE, pokemons) => {
