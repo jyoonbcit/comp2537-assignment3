@@ -21,6 +21,7 @@ const updatePaginationDiv = (currentPage, numPages) => {
   $('#pagination').empty()
 
   const endPage = numPages;
+  console.log(endPage)
   for (let i = currentPage; (i <= currentPage + 4 && i <= endPage); i++) {
     if (i === currentPage && currentPage !== 1) {
         $('#pagination').append(`
@@ -73,7 +74,7 @@ const setup = async () => {
 
   updatePokemonTypeFilterDiv()
   paginate(currentPage, PAGE_SIZE, pokemons)
-  const numPages = Math.ceil(pokemons.length / PAGE_SIZE)
+  let numPages = Math.ceil(pokemons.length / PAGE_SIZE)
   updatePaginationDiv(currentPage, numPages)
 
   // pop up modal when clicking on a pokemon card
@@ -128,13 +129,12 @@ const setup = async () => {
   // add event listener to pokemon type filter checkboxes and display pokemon of that type when the button is checked
     $('body').on('change', '#pokemonTypeFilter input', async function (e) {
         const checkedPokemonTypes = $('#pokemonTypeFilter input:checked').map((index, element) => element.value).get()
-        // console.log("checkedPokemonTypes: ", checkedPokemonTypes);
         if (checkedPokemonTypes.length === 0) {
             pokemons = await axios.get('https://pokeapi.co/api/v2/pokemon?offset=0&limit=810').then((res) => res.data.results)
         } else if (checkedPokemonTypes.length === 1) {
             console.log(checkedPokemonTypes)
             pokemons = await axios.get(`https://pokeapi.co/api/v2/type/${checkedPokemonTypes[0]}`).then((res) => res.data.pokemon.map((pokemon) => pokemon.pokemon))
-        } else if (checkedPokemonTypes.length > 1) {
+        } else if (checkedPokemonTypes.length === 2) {
             console.log(checkedPokemonTypes);
             pokemonOne = await axios.get(`https://pokeapi.co/api/v2/type/${checkedPokemonTypes[0]}`).then((res) => res.data.pokemon.map((pokemon) => pokemon.pokemon))
             pokemonTwo = await axios.get(`https://pokeapi.co/api/v2/type/${checkedPokemonTypes[1]}`).then((res) => res.data.pokemon.map((pokemon) => pokemon.pokemon))
@@ -145,7 +145,7 @@ const setup = async () => {
         // paginate again from the first page
         currentPage = 1;
         paginate(currentPage, PAGE_SIZE, pokemons)
-        const numPages = Math.ceil(pokemons.length / PAGE_SIZE)
+        numPages = Math.ceil(pokemons.length / PAGE_SIZE)
         updatePaginationDiv(currentPage, numPages)
     })
 }
