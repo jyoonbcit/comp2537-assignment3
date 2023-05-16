@@ -124,6 +124,30 @@ const setup = async () => {
     //update pagination buttons
     updatePaginationDiv(currentPage, numPages)
   })
+
+  // add event listener to pokemon type filter checkboxes and display pokemon of that type when the button is checked
+    $('body').on('change', '#pokemonTypeFilter input', async function (e) {
+        const checkedPokemonTypes = $('#pokemonTypeFilter input:checked').map((index, element) => element.value).get()
+        // console.log("checkedPokemonTypes: ", checkedPokemonTypes);
+        if (checkedPokemonTypes.length === 0) {
+            pokemons = await axios.get('https://pokeapi.co/api/v2/pokemon?offset=0&limit=810').then((res) => res.data.results)
+        } else if (checkedPokemonTypes.length === 1) {
+            console.log(checkedPokemonTypes)
+            pokemons = await axios.get(`https://pokeapi.co/api/v2/type/${checkedPokemonTypes[0]}`).then((res) => res.data.pokemon.map((pokemon) => pokemon.pokemon))
+        } else if (checkedPokemonTypes.length > 1) {
+            console.log(checkedPokemonTypes);
+            pokemonOne = await axios.get(`https://pokeapi.co/api/v2/type/${checkedPokemonTypes[0]}`).then((res) => res.data.pokemon.map((pokemon) => pokemon.pokemon))
+            pokemonTwo = await axios.get(`https://pokeapi.co/api/v2/type/${checkedPokemonTypes[1]}`).then((res) => res.data.pokemon.map((pokemon) => pokemon.pokemon))
+            pokemons = pokemonOne.filter(pokemon => pokemonTwo.find(p => p.name === pokemon.name));
+        } else {
+            pokemons = []
+        }
+        // paginate again from the first page
+        currentPage = 1;
+        paginate(currentPage, PAGE_SIZE, pokemons)
+        const numPages = Math.ceil(pokemons.length / PAGE_SIZE)
+        updatePaginationDiv(currentPage, numPages)
+    })
 }
 
 $(document).ready(setup)
